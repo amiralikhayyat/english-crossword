@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>جدول انگلیسی - پایه هفتم تا نهم</title>
+<meta name="theme-color" content="#1a237e">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Tahoma, 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(160deg, #0d1b2a 0%, #1b263b 30%, #415a77 70%, #778da9 100%);
+    background-attachment: fixed;
+    color: #e8e8e8;
+    min-height: 100vh;
+    padding: 12px;
+    direction: rtl;
+  }
+  .container { max-width: 480px; margin: 0 auto; }
+
+  .start-screen {
+    text-align: center;
+    padding: 50px 20px 30px;
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .start-screen .logo {
+    font-size: 3.2rem;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 4px 12px rgba(0,217,255,0.4));
+  }
+  .start-screen h1 {
+    font-size: 1.9rem;
+    background: linear-gradient(90deg, #00d9ff, #7b2cbf, #ff6b6b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+    font-weight: bold;
+  }
+  .start-screen .subtitle {
+    font-size: 1rem;
+    color: #b0bec5;
+    line-height: 1.8;
+    margin-bottom: 28px;
+    max-width: 320px;
+  }
+  .start-screen .subtitle span { color: #80deea; }
+  .btn-start {
+    background: linear-gradient(135deg, #00b4d8, #0077b6);
+    color: #fff;
+    padding: 16px 48px;
+    font-size: 1.15rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 6px 20px rgba(0,180,216,0.4);
+    transition: transform 0.2s;
+  }
+  .btn-start:active { transform: scale(0.96); }
+  .designer {
+    margin-top: 40px;
+    font-size: 1.1rem;
+    color: #ffd54f;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255,213,79,0.4);
+  }
+  .designer small {
+    display: block;
+    font-size: 0.8rem;
+    color: #90a4ae;
+    font-weight: normal;
+    margin-top: 4px;
+  }
+
+  .level-select {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-top: 28px;
+    width: 100%;
+    max-width: 340px;
+  }
+  .level-btn {
+    aspect-ratio: 1;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.1rem;
+    border: 2px solid transparent;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .level-btn.unlocked { background: rgba(0,180,216,0.25); border-color: #00b4d8; }
+  .level-btn.completed { background: rgba(76,175,80,0.35); border-color: #66bb6a; }
+  .level-btn.locked { opacity: 0.35; pointer-events: none; }
+
+  header { text-align: center; padding: 12px 0 8px; }
+  header h1 {
+    font-size: 1.4rem;
+    background: linear-gradient(90deg, #00d9ff, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  header .designer-small { font-size: 0.8rem; color: #ffd54f; margin-top: 4px; }
+
+  .level-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 11px 16px;
+    margin-bottom: 14px;
+    font-size: 0.95rem;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .level-info .stars { color: #ffd54f; font-weight: bold; }
+
+  #grid-container {
+    display: flex;
+    justify-content: center;
+    margin: 14px 0;
+    overflow-x: auto;
+    direction: ltr;
+  }
+  #crossword {
+    border-collapse: collapse;
+    background: #0d1b2a;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+    border-radius: 8px;
+    overflow: hidden;
+    direction: ltr;
+  }
+  #crossword td {
+    width: 34px; height: 34px;
+    border: 1px solid #1b263b;
+    text-align: center; vertical-align: middle;
+    position: relative; padding: 0;
+  }
+  #crossword td.black { background: #0a1220; border-color: #0a1220; }
+  #crossword td.cell { background: #f1f5f9; cursor: pointer; }
+  #crossword td.cell.selected { background: #81d4fa; }
+  #crossword td.cell.correct { background: #a5d6a7; }
+  #crossword td.cell.error { background: #ef9a9a; }
+  #crossword input {
+    width: 100%; height: 100%;
+    border: none; background: transparent;
+    text-align: center; font-size: 17px; font-weight: bold;
+    text-transform: uppercase; color: #0d1b2a;
+    caret-color: #0277bd; padding: 0; direction: ltr;
+  }
+  #crossword input:focus { outline: none; }
+  .number {
+    position: absolute; top: 1px; left: 2px;
+    font-size: 9px; color: #546e7a;
+    pointer-events: none; line-height: 1;
+  }
+
+  .clues-section {
+    background: rgba(255,255,255,0.08);
+    border-radius: 14px; padding: 14px; margin-top: 14px;
+    max-height: 260px; overflow-y: auto;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .clues-section h3 {
+    font-size: 1rem; color: #4fc3f7; margin-bottom: 10px;
+    border-bottom: 1px solid rgba(79,195,247,0.3); padding-bottom: 6px;
+  }
+  .clue {
+    padding: 7px 6px; font-size: 0.92rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer; border-radius: 8px;
+  }
+  .clue:hover, .clue.active { background: rgba(0,180,216,0.15); }
+  .clue .num { color: #4fc3f7; font-weight: bold; margin-left: 6px; }
+
+  .buttons { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  button {
+    flex: 1; min-width: 90px; padding: 13px 8px;
+    border: none; border-radius: 12px; font-size: 0.95rem;
+    font-family: inherit; cursor: pointer; transition: transform 0.15s;
+  }
+  button:active { transform: scale(0.96); }
+  .btn-check { background: linear-gradient(135deg, #00b09b, #96c93d); color: #fff; }
+  .btn-hint { background: linear-gradient(135deg, #f7971e, #ffd200); color: #222; }
+  .btn-next { background: linear-gradient(135deg, #7b2cbf, #9c27b0); color: #fff; display: none; }
+  .btn-reset { background: rgba(255,255,255,0.12); color: #ddd; }
+
+  .message {
+    text-align: center; padding: 12px; margin-top: 12px;
+    border-radius: 10px; font-size: 0.95rem; display: none;
+  }
+  .message.success { background: rgba(76,175,80,0.3); color: #a5d6a7; display: block; }
+  .message.error { background: rgba(244,67,54,0.25); color: #ef9a9a; display: block; }
+
+  .complete-screen { text-align: center; padding: 60px 20px; }
+  .complete-screen h2 {
+    font-size: 2rem;
+    background: linear-gradient(90deg, #00d9ff, #ffd54f);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom: 16px;
+  }
+  .complete-screen p { color: #b0bec5; margin-bottom: 24px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div id="start-screen" class="start-screen">
+    <div class="logo">🧩</div>
+    <h1>جدول انگلیسی</h1>
+    <p class="subtitle">
+      ۳۰ مرحله جدول کلمات متقاطع<br>
+      با واژگان کتاب‌های <span>پایه هفتم، هشتم و نهم</span><br>
+      از آسان به سخت — کاملاً آفلاین
+    </p>
+    <button class="btn-start" onclick="showLevelSelect()">شروع بازی</button>
+    <div id="level-select" class="level-select hidden"></div>
+    <div class="designer">
+      طراحی و ساخت: سید امیر علی خیاط زاده
+      <small>English Crossword · Prospect 1-2-3</small>
+    </div>
+  </div>
+
+  <div id="game-screen" class="hidden">
+    <header>
+      <h1>جدول انگلیسی</h1>
+      <div class="designer-small">طراحی و ساخت: سید امیر علی خیاط زاده</div>
+    </header>
+    <div class="level-info">
+      <span>مرحله <strong id="level-num">1</strong> از ۳۰</span>
+      <span class="stars" id="difficulty">★ آسان</span>
+    </div>
+    <div id="grid-container"><table id="crossword"></table></div>
+    <div class="clues-section">
+      <h3>سرنخ‌ها</h3>
+      <div id="clues-list" style="direction:rtl;"></div>
+    </div>
+    <div class="buttons">
+      <button class="btn-check" onclick="checkAnswers()">بررسی</button>
+      <button class="btn-hint" onclick="giveHint()">راهنمایی</button>
+      <button class="btn-reset" onclick="resetLevel()">پاک کردن</button>
+      <button class="btn-next" id="btn-next" onclick="nextLevel()">مرحله بعد ←</button>
+    </div>
+    <div id="message" class="message"></div>
+  </div>
+
+  <div id="complete-screen" class="complete-screen hidden">
+    <h2>🎉 تبریک!</h2>
+    <p>شما تمام ۳۰ مرحله را با موفقیت تمام کردید.</p>
+    <button class="btn-start" onclick="restartGame()">از اول شروع کن</button>
+    <div class="designer" style="margin-top:36px;">طراحی و ساخت: سید امیر علی خیاط زاده</div>
+  </div>
+
+</div>
+
+<script>
+const LEVELS = [
+  {
+    "size": 5,
+    "difficulty": "آسان",
+    "words": [
+      {
+        "answer": "BOOK",
+        "clue": "کتاب",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "BAG",
+        "clue": "کیف",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "GAME",
+        "clue": "بازی",
+        "row": 2,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 5,
+    "difficulty": "آسان",
+    "words": [
+      {
+        "answer": "DESK",
+        "clue": "میز",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "DOOR",
+        "clue": "درب",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "RED",
+        "clue": "قرمز",
+        "row": 3,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 5,
+    "difficulty": "آسان",
+    "words": [
+      {
+        "answer": "CAKE",
+        "clue": "کیک",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "CAT",
+        "clue": "گربه",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "TEA",
+        "clue": "چای",
+        "row": 2,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 5,
+    "difficulty": "آسان",
+    "words": [
+      {
+        "answer": "FISH",
+        "clue": "ماهی",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "FOOD",
+        "clue": "غذا",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "DAY",
+        "clue": "روز",
+        "row": 3,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 5,
+    "difficulty": "آسان",
+    "words": [
+      {
+        "answer": "GIRL",
+        "clue": "دختر",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "GOOD",
+        "clue": "خوب",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "DAY",
+        "clue": "روز",
+        "row": 3,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 5,
+    "difficulty": "آسان",
+    "words": [
+      {
+        "answer": "HAND",
+        "clue": "دست",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "HAPPY",
+        "clue": "خوشحال",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "YES",
+        "clue": "بله",
+        "row": 4,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 5,
+    "difficulty": "آسان",
+    "words": [
+      {
+        "answer": "WEEK",
+        "clue": "هفته",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "WATER",
+        "clue": "آب",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "TEA",
+        "clue": "چای",
+        "row": 2,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 5,
+    "difficulty": "آسان",
+    "words": [
+      {
+        "answer": "NAME",
+        "clue": "اسم",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "NOTE",
+        "clue": "یادداشت",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "EAR",
+        "clue": "گوش",
+        "row": 3,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 5,
+    "difficulty": "آسان",
+    "words": [
+      {
+        "answer": "RICE",
+        "clue": "برنج",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "RED",
+        "clue": "قرمز",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "DAY",
+        "clue": "روز",
+        "row": 2,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 5,
+    "difficulty": "آسان",
+    "words": [
+      {
+        "answer": "MILK",
+        "clue": "شیر",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "MAP",
+        "clue": "نقشه",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "PEN",
+        "clue": "قلم",
+        "row": 2,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 6,
+    "difficulty": "متوسط",
+    "words": [
+      {
+        "answer": "HOBBY",
+        "clue": "سرگرمی",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "HOME",
+        "clue": "خانه",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "END",
+        "clue": "پایان",
+        "row": 3,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 6,
+    "difficulty": "متوسط",
+    "words": [
+      {
+        "answer": "MOVIE",
+        "clue": "فیلم",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "MUSIC",
+        "clue": "موسیقی",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "CITY",
+        "clue": "شهر",
+        "row": 4,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 6,
+    "difficulty": "متوسط",
+    "words": [
+      {
+        "answer": "SPORT",
+        "clue": "ورزش",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "SCHOOL",
+        "clue": "مدرسه",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "LEARN",
+        "clue": "یاد گرفتن",
+        "row": 5,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 6,
+    "difficulty": "متوسط",
+    "words": [
+      {
+        "answer": "GARDEN",
+        "clue": "باغ",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "GAME",
+        "clue": "بازی",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "ME",
+        "clue": "من",
+        "row": 2,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 6,
+    "difficulty": "متوسط",
+    "words": [
+      {
+        "answer": "FAMILY",
+        "clue": "خانواده",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "FATHER",
+        "clue": "پدر",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "REST",
+        "clue": "استراحت",
+        "row": 5,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 6,
+    "difficulty": "متوسط",
+    "words": [
+      {
+        "answer": "TRAVEL",
+        "clue": "سفر",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "TRAIN",
+        "clue": "قطار",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "NOW",
+        "clue": "الان",
+        "row": 4,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 6,
+    "difficulty": "متوسط",
+    "words": [
+      {
+        "answer": "HEALTH",
+        "clue": "سلامت",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "HEAD",
+        "clue": "سر",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "DAY",
+        "clue": "روز",
+        "row": 3,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 7,
+    "difficulty": "متوسط",
+    "words": [
+      {
+        "answer": "COUNTRY",
+        "clue": "کشور",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "CITY",
+        "clue": "شهر",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "YES",
+        "clue": "بله",
+        "row": 3,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 7,
+    "difficulty": "متوسط",
+    "words": [
+      {
+        "answer": "MORNING",
+        "clue": "صبح",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "MUSIC",
+        "clue": "موسیقی",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "CITY",
+        "clue": "شهر",
+        "row": 4,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 7,
+    "difficulty": "متوسط",
+    "words": [
+      {
+        "answer": "ABILITY",
+        "clue": "توانایی",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "ACT",
+        "clue": "عمل",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "TEA",
+        "clue": "چای",
+        "row": 2,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 7,
+    "difficulty": "سخت",
+    "words": [
+      {
+        "answer": "BRAVE",
+        "clue": "شجاع",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "BOOK",
+        "clue": "کتاب",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "OK",
+        "clue": "خوب",
+        "row": 2,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 7,
+    "difficulty": "سخت",
+    "words": [
+      {
+        "answer": "AIRPORT",
+        "clue": "فرودگاه",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "AIR",
+        "clue": "هوا",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "RED",
+        "clue": "قرمز",
+        "row": 2,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 8,
+    "difficulty": "سخت",
+    "words": [
+      {
+        "answer": "FESTIVAL",
+        "clue": "جشنواره",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "FAMILY",
+        "clue": "خانواده",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "YES",
+        "clue": "بله",
+        "row": 5,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 8,
+    "difficulty": "سخت",
+    "words": [
+      {
+        "answer": "ACCIDENT",
+        "clue": "تصادف",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "ACT",
+        "clue": "عمل",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "TEA",
+        "clue": "چای",
+        "row": 2,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 7,
+    "difficulty": "سخت",
+    "words": [
+      {
+        "answer": "CHARITY",
+        "clue": "خیریه",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "CARE",
+        "clue": "مراقبت",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "EAR",
+        "clue": "گوش",
+        "row": 3,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 8,
+    "difficulty": "سخت",
+    "words": [
+      {
+        "answer": "GENEROUS",
+        "clue": "سخاوتمند",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "GOOD",
+        "clue": "خوب",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "DAY",
+        "clue": "روز",
+        "row": 3,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 7,
+    "difficulty": "سخت",
+    "words": [
+      {
+        "answer": "CAREFUL",
+        "clue": "با دقت",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "CARE",
+        "clue": "مراقبت",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "EAR",
+        "clue": "گوش",
+        "row": 3,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 8,
+    "difficulty": "سخت",
+    "words": [
+      {
+        "answer": "PASSPORT",
+        "clue": "گذرنامه",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "PARK",
+        "clue": "پارک",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "KEY",
+        "clue": "کلید",
+        "row": 3,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 9,
+    "difficulty": "سخت",
+    "words": [
+      {
+        "answer": "EMERGENCY",
+        "clue": "اورژانس",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "EAR",
+        "clue": "گوش",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "RED",
+        "clue": "قرمز",
+        "row": 2,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  },
+  {
+    "size": 7,
+    "difficulty": "سخت",
+    "words": [
+      {
+        "answer": "CULTURE",
+        "clue": "فرهنگ",
+        "row": 0,
+        "col": 0,
+        "dir": "across",
+        "num": 1
+      },
+      {
+        "answer": "CITY",
+        "clue": "شهر",
+        "row": 0,
+        "col": 0,
+        "dir": "down",
+        "num": 1
+      },
+      {
+        "answer": "YES",
+        "clue": "بله",
+        "row": 3,
+        "col": 0,
+        "dir": "across",
+        "num": 2
+      }
+    ]
+  }
+];
+
+let currentLevel = 0, maxUnlocked = 0;
+
+function loadProgress() {
+  try {
+    const s = localStorage.getItem('crossword_progress_v3');
+    if (s) { const d = JSON.parse(s); maxUnlocked = d.maxUnlocked||0; currentLevel = d.currentLevel||0; }
+  } catch(e){}
+}
+function saveProgress() {
+  localStorage.setItem('crossword_progress_v3', JSON.stringify({maxUnlocked, currentLevel}));
+}
+
+function showLevelSelect() {
+  const c = document.getElementById('level-select');
+  c.classList.remove('hidden'); c.innerHTML = '';
+  for (let i=0; i<LEVELS.length; i++) {
+    const b = document.createElement('button');
+    b.className = 'level-btn'; b.textContent = i+1;
+    if (i > maxUnlocked) b.classList.add('locked');
+    else if (i < maxUnlocked) b.classList.add('completed');
+    else b.classList.add('unlocked');
+    b.onclick = () => startLevel(i);
+    c.appendChild(b);
+  }
+}
+
+function startLevel(idx) {
+  currentLevel = idx;
+  document.getElementById('start-screen').classList.add('hidden');
+  document.getElementById('complete-screen').classList.add('hidden');
+  document.getElementById('game-screen').classList.remove('hidden');
+  loadLevel(idx);
+}
+
+function loadLevel(index) {
+  const level = LEVELS[index];
+  document.getElementById('level-num').textContent = index+1;
+  document.getElementById('difficulty').textContent = '★ ' + level.difficulty;
+  document.getElementById('btn-next').style.display = 'none';
+  document.getElementById('message').className = 'message';
+  document.getElementById('message').textContent = '';
+
+  const size = level.size;
+  const grid = Array.from({length:size}, () => Array.from({length:size}, () => ({letter:null, number:0, isBlack:true})));
+
+  level.words.forEach(w => {
+    const letters = w.answer.toUpperCase().split('');
+    letters.forEach((ch,i) => {
+      let r=w.row, c=w.col;
+      if (w.dir==='across') c+=i; else r+=i;
+      if (r>=size || c>=size) return;
+      grid[r][c].isBlack = false;
+      grid[r][c].letter = ch;
+      if (i===0) grid[r][c].number = w.num;
+    });
+  });
+
+  const table = document.getElementById('crossword');
+  table.innerHTML = '';
+  for (let r=0; r<size; r++) {
+    const tr = document.createElement('tr');
+    for (let c=0; c<size; c++) {
+      const td = document.createElement('td');
+      const cell = grid[r][c];
+      if (cell.isBlack) td.className = 'black';
+      else {
+        td.className = 'cell';
+        td.dataset.row = r; td.dataset.col = c;
+        if (cell.number) {
+          const num = document.createElement('span');
+          num.className = 'number'; num.textContent = cell.number;
+          td.appendChild(num);
+        }
+        const input = document.createElement('input');
+        input.maxLength = 1; input.autocomplete = 'off'; input.autocapitalize = 'characters';
+        input.dataset.row = r; input.dataset.col = c; input.dataset.answer = cell.letter;
+        input.addEventListener('input', onInput);
+        input.addEventListener('focus', () => selectCell(r,c));
+        input.addEventListener('keydown', onKeyDown);
+        td.appendChild(input);
+        td.onclick = () => input.focus();
+      }
+      tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+
+  const cluesDiv = document.getElementById('clues-list');
+  cluesDiv.innerHTML = '';
+
+  const across = level.words.filter(w => w.dir === 'across').sort((a,b) => a.num - b.num);
+  const down   = level.words.filter(w => w.dir === 'down').sort((a,b) => a.num - b.num);
+
+  function addClueGroup(title, list) {
+    if (list.length === 0) return;
+    const titleEl = document.createElement('div');
+    titleEl.style.cssText = 'font-weight:bold;color:#4fc3f7;margin:10px 0 6px;font-size:0.95rem;';
+    titleEl.textContent = title;
+    cluesDiv.appendChild(titleEl);
+
+    list.forEach(w => {
+      const div = document.createElement('div');
+      div.className = 'clue';
+      div.innerHTML = `<span class="num">${w.num}.</span> ${w.clue}`;
+      div.onclick = () => {
+        const first = document.querySelector(`input[data-row="${w.row}"][data-col="${w.col}"]`);
+        if (first) first.focus();
+      };
+      cluesDiv.appendChild(div);
+    });
+  }
+
+  addClueGroup('افقی ←', across);
+  addClueGroup('عمودی ↓', down);
+}
+
+function selectCell(r,c) {
+  document.querySelectorAll('td.cell').forEach(td => td.classList.remove('selected'));
+  const td = document.querySelector(`td.cell[data-row="${r}"][data-col="${c}"]`);
+  if (td) td.classList.add('selected');
+}
+function onInput(e) {
+  let val = e.target.value.toUpperCase().replace(/[^A-Z]/g,'');
+  e.target.value = val;
+  if (val) moveToNext(e.target);
+}
+function onKeyDown(e) {
+  const r=+e.target.dataset.row, c=+e.target.dataset.col;
+  if (e.key==='Backspace' && !e.target.value) moveToPrev(e.target);
+  else if (e.key==='ArrowLeft') {e.preventDefault(); focusCell(r,c-1);}
+  else if (e.key==='ArrowRight') {e.preventDefault(); focusCell(r,c+1);}
+  else if (e.key==='ArrowUp') {e.preventDefault(); focusCell(r-1,c);}
+  else if (e.key==='ArrowDown') {e.preventDefault(); focusCell(r+1,c);}
+}
+function focusCell(r,c) {
+  const i = document.querySelector(`input[data-row="${r}"][data-col="${c}"]`);
+  if (i) i.focus();
+}
+function moveToNext(input) {
+  const r=+input.dataset.row, c=+input.dataset.col;
+  let n = document.querySelector(`input[data-row="${r}"][data-col="${c+1}"]`);
+  if (!n) n = document.querySelector(`input[data-row="${r+1}"][data-col="${c}"]`);
+  if (n) n.focus();
+}
+function moveToPrev(input) {
+  const r=+input.dataset.row, c=+input.dataset.col;
+  let p = document.querySelector(`input[data-row="${r}"][data-col="${c-1}"]`);
+  if (!p) p = document.querySelector(`input[data-row="${r-1}"][data-col="${c}"]`);
+  if (p) p.focus();
+}
+
+function checkAnswers() {
+  const level = LEVELS[currentLevel];
+  let allCorrect=true, hasEmpty=false;
+  document.querySelectorAll('td.cell').forEach(td => td.classList.remove('correct','error'));
+  level.words.forEach(w => {
+    const letters = w.answer.toUpperCase().split('');
+    letters.forEach((ch,i) => {
+      let r=w.row, c=w.col;
+      if (w.dir==='across') c+=i; else r+=i;
+      const input = document.querySelector(`input[data-row="${r}"][data-col="${c}"]`);
+      const td = input ? input.parentElement : null;
+      if (!input || !input.value) { hasEmpty=true; allCorrect=false; }
+      else if (input.value.toUpperCase() !== ch) { allCorrect=false; if(td) td.classList.add('error'); }
+      else { if(td) td.classList.add('correct'); }
+    });
+  });
+  const msg = document.getElementById('message');
+  if (hasEmpty) { msg.className='message error'; msg.textContent='همه خانه‌ها را پر کنید.'; }
+  else if (allCorrect) {
+    msg.className='message success'; msg.textContent='آفرین! همه کلمات درست است ✓';
+    document.getElementById('btn-next').style.display='block';
+    if (currentLevel >= maxUnlocked) { maxUnlocked = currentLevel+1; saveProgress(); }
+  } else { msg.className='message error'; msg.textContent='بعضی کلمات اشتباه است. دوباره تلاش کنید.'; }
+}
+
+function giveHint() {
+  const level = LEVELS[currentLevel];
+  for (const w of level.words) {
+    const letters = w.answer.toUpperCase().split('');
+    for (let i=0; i<letters.length; i++) {
+      let r=w.row, c=w.col;
+      if (w.dir==='across') c+=i; else r+=i;
+      const input = document.querySelector(`input[data-row="${r}"][data-col="${c}"]`);
+      if (input && input.value.toUpperCase() !== letters[i]) {
+        input.value = letters[i];
+        input.parentElement.classList.add('correct');
+        input.focus();
+        return;
+      }
+    }
+  }
+  alert('همه حروف درست پر شده‌اند!');
+}
+
+function resetLevel() {
+  document.querySelectorAll('#crossword input').forEach(inp => {
+    inp.value=''; inp.parentElement.classList.remove('correct','error','selected');
+  });
+  document.getElementById('message').className='message';
+  document.getElementById('btn-next').style.display='none';
+}
+
+function nextLevel() {
+  if (currentLevel+1 >= LEVELS.length) {
+    document.getElementById('game-screen').classList.add('hidden');
+    document.getElementById('complete-screen').classList.remove('hidden');
+    maxUnlocked = LEVELS.length; saveProgress();
+  } else startLevel(currentLevel+1);
+}
+
+function restartGame() {
+  maxUnlocked=0; currentLevel=0; saveProgress();
+  document.getElementById('complete-screen').classList.add('hidden');
+  document.getElementById('start-screen').classList.remove('hidden');
+  document.getElementById('level-select').classList.add('hidden');
+}
+
+loadProgress();
+</script>
+</body>
+</html>
